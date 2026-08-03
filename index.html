@@ -1,1128 +1,568 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perry Patterson - Mobile & Web Developer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #0d0d11;
-            --bg-card: #16161d;
-            --bg-elevated: #1d1d28;
-            --text-primary: #f5f5f7;
-            --text-secondary: #a0a0ab;
-            --text-muted: #6e6e78;
-            --accent-primary: #7c3aed;
-            --accent-secondary: #a78bfa;
-            --accent-gold: #fbbf24;
-            --border: rgba(255, 255, 255, 0.08);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Animated grain texture */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            opacity: 0.03;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        /* Gradient orbs */
-        .gradient-orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 0;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        .orb-1 {
-            width: 500px;
-            height: 500px;
-            background: var(--accent-primary);
-            top: -10%;
-            right: -10%;
-            animation-delay: 0s;
-        }
-
-        .orb-2 {
-            width: 400px;
-            height: 400px;
-            background: var(--accent-gold);
-            bottom: -10%;
-            left: -10%;
-            animation-delay: -10s;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-
-        /* Loading screen */
-        #loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s, visibility 0.5s;
-        }
-
-        #loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .loader-text {
-            font-size: 1.2rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 2rem 5%;
-            z-index: 1000;
-            backdrop-filter: blur(20px);
-            background: rgba(13, 13, 17, 0.8);
-            border-bottom: 1px solid var(--border);
-            opacity: 0;
-            transform: translateY(-20px);
-            animation: slideDown 0.8s ease forwards 0.3s;
-        }
-
-        @keyframes slideDown {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.2rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 3rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent-primary);
-            transition: width 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--text-primary);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Container */
-        main {
-            position: relative;
-            z-index: 1;
-        }
-
-        section {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 5%;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-top: 100px;
-            padding-bottom: 100px;
-            opacity: 0;
-            animation: fadeInUp 1s ease forwards 0.5s;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero-label {
-            display: inline-block;
-            padding: 0.5rem 1.2rem;
-            background: rgba(124, 58, 237, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.3);
-            border-radius: 50px;
-            color: var(--accent-secondary);
-            font-size: 0.85rem;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 2rem;
-        }
-
-        h1 {
-            font-family: 'DM Serif Display', serif;
-            font-size: clamp(3.5rem, 10vw, 7rem);
-            line-height: 1.1;
-            margin-bottom: 2rem;
-            font-weight: 400;
-            max-width: 1000px;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1.3rem, 3vw, 2rem);
-            color: var(--text-secondary);
-            font-weight: 300;
-            max-width: 800px;
-            margin-bottom: 3rem;
-            line-height: 1.5;
-        }
-
-        .hero-subtitle .highlight {
-            color: var(--accent-gold);
-            font-weight: 500;
-        }
-
-        .cta-group {
-            display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .cta-primary {
-            padding: 1.2rem 2.5rem;
-            background: var(--accent-primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
-        }
-
-        .cta-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
-        }
-
-        .cta-secondary {
-            padding: 1.2rem 2.5rem;
-            background: transparent;
-            color: var(--text-primary);
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .cta-secondary:hover {
-            border-color: var(--accent-primary);
-            background: rgba(124, 58, 237, 0.05);
-        }
-
-        /* About Section */
-        .about {
-            padding: 8rem 5%;
-        }
-
-        .section-label {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        h2 {
-            font-family: 'DM Serif Display', serif;
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            margin-bottom: 3rem;
-            font-weight: 400;
-        }
-
-        .about-content {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 5rem;
-            align-items: start;
-        }
-
-        .about-text {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-
-        .about-text p {
-            margin-bottom: 1.5rem;
-        }
-
-        .about-stats {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--accent-gold);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* Projects Section */
-        .projects {
-            padding: 8rem 5%;
-            background: var(--bg-elevated);
-        }
-
-        .projects-intro {
-            margin-bottom: 5rem;
-        }
-
-        .projects-grid {
-            display: grid;
-            gap: 3rem;
-        }
-
-        .project-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-            transition: all 0.4s ease;
-            cursor: pointer;
-        }
-
-        .project-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(124, 58, 237, 0.3);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-        }
-
-        .project-image {
-            position: relative;
-            height: 500px;
-            overflow: hidden;
-            background: var(--bg-elevated);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .project-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        .project-card:hover .project-image img {
-            transform: scale(1.05);
-        }
-
-        .project-content {
-            padding: 2.5rem;
-        }
-
-        .project-category {
-            color: var(--accent-gold);
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .project-title {
-            font-family: 'DM Serif Display', serif;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            font-weight: 400;
-        }
-
-        .project-description {
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 2rem;
-        }
-
-        .project-tech {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-        }
-
-        .tech-tag {
-            padding: 0.5rem 1rem;
-            background: rgba(124, 58, 237, 0.1);
-            border: 1px solid rgba(124, 58, 237, 0.2);
-            border-radius: 6px;
-            color: var(--accent-secondary);
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        /* Project Gallery within cards */
-        .project-gallery {
-            margin-top: 2.5rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .gallery-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: var(--text-primary);
-        }
-
-        .project-gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-        }
-
-        .gallery-item {
-            position: relative;
-            aspect-ratio: 9/16;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .gallery-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            border-color: rgba(124, 58, 237, 0.4);
-        }
-
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .gallery-item:hover img {
-            transform: scale(1.05);
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 1rem;
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            opacity: 1;
-        }
-
-        .gallery-label {
-            color: white;
-            font-weight: 600;
-            font-size: 0.8rem;
-        }
-
-        /* Skills Section */
-        .skills {
-            padding: 8rem 5%;
-        }
-
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
-        .skill-card {
-            background: var(--bg-card);
-            padding: 2.5rem;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .skill-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(124, 58, 237, 0.3);
-            background: var(--bg-elevated);
-        }
-
-        .skill-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .skill-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-            font-weight: 600;
-        }
-
-        .skill-card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* Contact Section */
-        .contact {
-            padding: 8rem 5%;
-            background: var(--bg-elevated);
-        }
-
-        .contact-container {
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .contact-container h2 {
-            margin-bottom: 2rem;
-        }
-
-        .contact-text {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            margin-bottom: 3rem;
-            line-height: 1.7;
-        }
-
-        .contact-buttons {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .contact-email {
-            display: inline-block;
-            padding: 1.5rem 3rem;
-            background: var(--accent-primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.3);
-        }
-
-        .contact-email:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
-        }
-
-        .contact-whatsapp {
-            display: inline-block;
-            padding: 1.5rem 3rem;
-            background: #25D366;
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(37, 211, 102, 0.3);
-        }
-
-        .contact-whatsapp:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(37, 211, 102, 0.4);
-            background: #20ba5a;
-        }
-
-        /* Footer */
-        footer {
-            padding: 3rem 5%;
-            text-align: center;
-            border-top: 1px solid var(--border);
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .social-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: var(--accent-primary);
-        }
-
-        footer p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                gap: 1.5rem;
-            }
-
-            h1 {
-                font-size: 3rem;
-            }
-
-            .about-content {
-                grid-template-columns: 1fr;
-                gap: 3rem;
-            }
-
-            .project-image {
-                height: 300px;
-            }
-
-            .cta-group {
-                flex-direction: column;
-            }
-
-            .cta-primary,
-            .cta-secondary {
-                text-align: center;
-            }
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perry Patterson — Software Engineer</title>
+<meta name="description" content="Perry Patterson — full-stack mobile & web developer in Accra, Ghana. I build and ship complete e-commerce, food-tech, and AI-powered products end to end.">
+<script>document.documentElement.className = "js";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F7F6F2;
+  --paper-2:#EFEDE6;
+  --paper-3:#E7E4DA;
+  --ink:#16191F;
+  --ink-soft:#565C66;
+  --line:rgba(22,25,31,0.12);
+  --line-soft:rgba(22,25,31,0.07);
+  --teal:#0E5A57;
+  --teal-bright:#12807A;
+  --teal-tint:rgba(14,90,87,0.08);
+  --maxw:1120px;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --display:'Archivo',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--sans);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  font-size:17px;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+::selection{background:var(--teal);color:var(--paper)}
+
+/* ---------- shared shell ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(1.25rem,5vw,2.5rem)}
+.section{padding:clamp(4rem,9vw,7.5rem) 0;border-top:1px solid var(--line-soft)}
+.eyebrow{
+  font-family:var(--mono);
+  font-size:0.78rem;
+  font-weight:500;
+  letter-spacing:0.04em;
+  color:var(--teal);
+  text-transform:lowercase;
+  margin-bottom:1.4rem;
+  display:flex;align-items:center;gap:0.6rem;
+}
+.eyebrow::before{content:"//";opacity:0.55}
+.sec-head{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:clamp(1.9rem,4.2vw,2.9rem);
+  line-height:1.05;
+  letter-spacing:-0.02em;
+  max-width:16ch;
+  margin-bottom:2.6rem;
+}
+
+/* ---------- nav ---------- */
+header.nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(247,246,242,0.82);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line-soft);
+}
+.nav-inner{
+  max-width:var(--maxw);margin:0 auto;
+  padding:0.95rem clamp(1.25rem,5vw,2.5rem);
+  display:flex;align-items:center;justify-content:space-between;gap:1rem;
+}
+.brand{display:flex;align-items:center;gap:0.65rem;font-weight:600;letter-spacing:-0.01em}
+.brand .mark{
+  width:30px;height:30px;border-radius:7px;
+  background:var(--teal);color:var(--paper);
+  display:grid;place-items:center;
+  font-family:var(--mono);font-size:0.85rem;font-weight:600;
+}
+.nav-links{display:flex;align-items:center;gap:1.9rem;list-style:none}
+.nav-links a{
+  font-family:var(--mono);font-size:0.82rem;color:var(--ink-soft);
+  transition:color .2s;position:relative;
+}
+.nav-links a:hover{color:var(--ink)}
+.nav-cv{
+  font-family:var(--mono);font-size:0.8rem;
+  padding:0.5rem 0.95rem;border:1px solid var(--ink);border-radius:8px;
+  color:var(--ink);transition:all .2s;white-space:nowrap;
+}
+.nav-cv:hover{background:var(--ink);color:var(--paper)}
+@media(max-width:760px){
+  .nav-links{display:none}
+}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(3.5rem,9vw,6.5rem) 0 clamp(3rem,7vw,5rem)}
+.hero .status{
+  font-family:var(--mono);font-size:0.8rem;color:var(--ink-soft);
+  display:inline-flex;align-items:center;gap:0.55rem;margin-bottom:1.8rem;
+}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--teal-bright);
+  box-shadow:0 0 0 0 rgba(18,128,122,0.45);animation:ping 2.4s ease-out infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(18,128,122,0.4)}70%{box-shadow:0 0 0 9px rgba(18,128,122,0)}100%{box-shadow:0 0 0 0 rgba(18,128,122,0)}}
+.hero h1{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(2.6rem,7.2vw,5rem);
+  line-height:1.02;letter-spacing:-0.035em;
+  max-width:16ch;margin-bottom:1.6rem;
+}
+.hero h1 .accent{color:var(--teal)}
+.hero .lede{
+  font-size:clamp(1.05rem,2.1vw,1.28rem);
+  color:var(--ink-soft);max-width:56ch;margin-bottom:2.2rem;
+}
+.chips{display:flex;flex-wrap:wrap;gap:0.55rem;margin-bottom:2.4rem}
+.chip{
+  font-family:var(--mono);font-size:0.78rem;color:var(--ink);
+  background:var(--paper-2);border:1px solid var(--line);
+  padding:0.4rem 0.8rem;border-radius:999px;
+}
+.cta-row{display:flex;flex-wrap:wrap;gap:0.9rem}
+.btn{
+  font-family:var(--mono);font-size:0.86rem;font-weight:500;
+  padding:0.85rem 1.5rem;border-radius:10px;transition:all .2s;
+  display:inline-flex;align-items:center;gap:0.5rem;cursor:pointer;
+}
+.btn-primary{background:var(--teal);color:var(--paper);border:1px solid var(--teal)}
+.btn-primary:hover{background:var(--teal-bright);border-color:var(--teal-bright);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+
+/* ---------- about ---------- */
+.about-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(2rem,5vw,4.5rem);align-items:start}
+.about-body p{color:var(--ink-soft);margin-bottom:1.2rem;max-width:52ch}
+.about-body p strong{color:var(--ink);font-weight:600}
+.glance{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--paper-2)}
+.glance-row{display:flex;justify-content:space-between;gap:1rem;padding:0.95rem 1.2rem;border-bottom:1px solid var(--line-soft)}
+.glance-row:last-child{border-bottom:0}
+.glance-row .k{font-family:var(--mono);font-size:0.76rem;color:var(--teal);text-transform:lowercase}
+.glance-row .v{font-size:0.92rem;text-align:right;font-weight:500}
+@media(max-width:820px){.about-grid{grid-template-columns:1fr}}
+
+/* ---------- experience timeline ---------- */
+.tl{position:relative}
+.tl-item{
+  display:grid;grid-template-columns:170px 1fr;gap:clamp(1rem,3vw,2.5rem);
+  padding:1.8rem 0;border-top:1px solid var(--line-soft);
+}
+.tl-item:first-child{border-top:0}
+.tl-when{font-family:var(--mono);font-size:0.82rem;color:var(--ink-soft)}
+.tl-place{font-family:var(--mono);font-size:0.74rem;color:var(--teal);margin-top:0.35rem}
+.tl-org{font-family:var(--mono);font-size:0.78rem;color:var(--ink-soft);margin-bottom:0.6rem}
+.tl-role{font-family:var(--display);font-weight:700;font-size:1.25rem;letter-spacing:-0.01em;margin-bottom:0.5rem}
+.tl-desc{color:var(--ink-soft);max-width:60ch;font-size:0.98rem}
+@media(max-width:640px){.tl-item{grid-template-columns:1fr;gap:0.5rem}.tl-place{margin-top:0.15rem}}
+
+/* ---------- projects ---------- */
+.proj{
+  border:1px solid var(--line);border-radius:18px;background:var(--paper-2);
+  padding:clamp(1.4rem,3.5vw,2.4rem);margin-bottom:1.6rem;
+  transition:border-color .25s, transform .25s, box-shadow .25s;
+}
+.proj:hover{border-color:rgba(14,90,87,0.4);transform:translateY(-3px);box-shadow:0 18px 40px -24px rgba(22,25,31,0.4)}
+.proj-top{display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.proj-logo{
+  width:52px;height:52px;border-radius:12px;flex-shrink:0;
+  background:var(--paper-3);border:1px solid var(--line);
+  display:grid;place-items:center;overflow:hidden;
+}
+.proj-logo img{width:100%;height:100%;object-fit:cover}
+.proj-head{flex:1;min-width:200px}
+.proj-cat{font-family:var(--mono);font-size:0.72rem;color:var(--teal);letter-spacing:0.03em;text-transform:uppercase;margin-bottom:0.25rem}
+.proj-title{font-family:var(--display);font-weight:700;font-size:1.5rem;letter-spacing:-0.015em}
+.proj-metrics{display:flex;flex-wrap:wrap;gap:0.5rem;align-content:flex-start}
+.metric{
+  font-family:var(--mono);font-size:0.75rem;font-weight:500;color:var(--ink);
+  background:var(--teal-tint);border:1px solid rgba(14,90,87,0.2);
+  padding:0.35rem 0.7rem;border-radius:8px;white-space:nowrap;
+}
+.proj-desc{color:var(--ink-soft);max-width:70ch;margin-bottom:1.3rem;font-size:0.99rem}
+.tags{display:flex;flex-wrap:wrap;gap:0.45rem;margin-bottom:1.6rem}
+.tag{font-family:var(--mono);font-size:0.74rem;color:var(--ink-soft);border:1px solid var(--line);padding:0.3rem 0.65rem;border-radius:6px}
+.gallery{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:0.7rem;
+  padding-top:1.3rem;border-top:1px solid var(--line-soft);
+}
+.shot{margin:0}
+.shot .frame{
+  aspect-ratio:9/16;border-radius:10px;overflow:hidden;
+  border:1px solid var(--line);background:var(--paper-3);
+  transition:transform .25s;
+}
+.shot:hover .frame{transform:translateY(-3px)}
+.shot img{width:100%;height:100%;object-fit:cover}
+.shot figcaption{font-family:var(--mono);font-size:0.68rem;color:var(--ink-soft);margin-top:0.45rem;text-align:center}
+
+/* ---------- capabilities ---------- */
+.caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem 2.5rem}
+.cap-group{border-top:1px solid var(--line);padding-top:1rem}
+.cap-label{font-family:var(--mono);font-size:0.78rem;color:var(--teal);margin-bottom:0.7rem}
+.cap-list{display:flex;flex-wrap:wrap;gap:0.4rem 0.5rem}
+.cap-list span{font-size:0.92rem;color:var(--ink);background:var(--paper-2);border:1px solid var(--line-soft);padding:0.28rem 0.65rem;border-radius:7px}
+
+/* ---------- education ---------- */
+.edu-item{display:grid;grid-template-columns:1fr auto;gap:1rem;padding:1.4rem 0;border-top:1px solid var(--line-soft)}
+.edu-item:first-of-type{border-top:0}
+.edu-deg{font-family:var(--display);font-weight:700;font-size:1.2rem;letter-spacing:-0.01em}
+.edu-school{color:var(--ink-soft);font-size:0.95rem;margin-top:0.25rem}
+.edu-meta{font-family:var(--mono);font-size:0.82rem;color:var(--teal);text-align:right;white-space:nowrap}
+@media(max-width:560px){.edu-item{grid-template-columns:1fr}.edu-meta{text-align:left}}
+
+/* ---------- contact ---------- */
+.contact{background:var(--ink);color:var(--paper);border-radius:24px;padding:clamp(2.5rem,6vw,5rem);text-align:center}
+.contact .eyebrow{color:#7FD0CB;justify-content:center}
+.contact .eyebrow::before{color:#7FD0CB}
+.contact h2{font-family:var(--display);font-weight:700;font-size:clamp(2rem,5vw,3.2rem);letter-spacing:-0.025em;line-height:1.05;margin-bottom:1.3rem}
+.contact p{color:rgba(247,246,242,0.7);max-width:48ch;margin:0 auto 2.4rem}
+.contact-row{display:flex;flex-wrap:wrap;gap:0.9rem;justify-content:center}
+.btn-light{background:var(--paper);color:var(--ink);border:1px solid var(--paper)}
+.btn-light:hover{background:transparent;color:var(--paper);transform:translateY(-2px)}
+.btn-outline{background:transparent;color:var(--paper);border:1px solid rgba(247,246,242,0.3)}
+.btn-outline:hover{border-color:var(--paper);transform:translateY(-2px)}
+.contact-wrap{padding-bottom:clamp(3rem,7vw,5rem)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line-soft);padding:2.5rem 0}
+.foot-inner{max-width:var(--maxw);margin:0 auto;padding:0 clamp(1.25rem,5vw,2.5rem);
+  display:flex;flex-wrap:wrap;gap:1rem;justify-content:space-between;align-items:center}
+.foot-links{display:flex;gap:1.5rem;font-family:var(--mono);font-size:0.82rem}
+.foot-links a{color:var(--ink-soft);transition:color .2s}
+.foot-links a:hover{color:var(--teal)}
+.foot-copy{font-family:var(--mono);font-size:0.76rem;color:var(--ink-soft)}
+
+/* ---------- reveal ---------- */
+.js .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.js .reveal.in{opacity:1;transform:none}
+:focus-visible{outline:2px solid var(--teal-bright);outline-offset:3px;border-radius:4px}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important}
+  .js .reveal{opacity:1!important;transform:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div id="loader">
-        <div class="loader-text">LOADING</div>
-    </div>
 
-    <!-- Gradient Orbs -->
-    <div class="gradient-orb orb-1"></div>
-    <div class="gradient-orb orb-2"></div>
-
-    <!-- Navigation -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="mark">PP</span> Perry Patterson</a>
     <nav>
-        <div class="nav-container">
-            <div class="logo">Perry Patterson</div>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </div>
+      <ul class="nav-links">
+        <li><a href="#profile">Profile</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#work">Work</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
     </nav>
+    <a class="nav-cv" href="Perry_Patterson_CV.pdf" download>Download CV</a>
+  </div>
+</header>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <span class="hero-label">Mobile & Web Developer</span>
-            <h1>HELLO! I'M<br>PERRY PATTERSON</h1>
-            <p class="hero-subtitle">
-                <span class="highlight">Experience-driven developer.</span><br>
-                Captivate users, build solutions that scale
-            </p>
-            <div class="cta-group">
-                <a href="#projects" class="cta-primary">View My Work</a>
-                <a href="#contact" class="cta-secondary">Get in Touch</a>
-            </div>
-        </section>
+<main id="top">
 
-        <!-- About Section -->
-        <section id="about" class="about">
-            <div class="section-label">Who I Am</div>
-            <h2>About Me</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>
-                        I'm Perry Patterson, a mobile and web software developer with extensive experience building solutions across multiple domains. My expertise spans e-commerce platforms, financial applications, educational technology, and productivity tools, among many others.
-                    </p>
-                    <p>
-                        I specialize in creating seamless user experiences through clean, efficient code and thoughtful design. Whether it's developing complex mobile applications or crafting responsive web interfaces, I bring technical excellence and creative problem-solving to every project.
-                    </p>
-                    <p>
-                        My approach combines modern development practices with a deep understanding of user needs, resulting in software that not only functions flawlessly but delights users at every interaction.
-                    </p>
-                </div>
-                <div class="about-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Projects Completed</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">4</div>
-                        <div class="stat-label">Core Specializations</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">100%</div>
-                        <div class="stat-label">Client Satisfaction</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="status"><span class="dot"></span> Available for new roles — Accra &amp; remote</div>
+      <h1>I build and ship complete <span class="accent">products</span>, end to end.</h1>
+      <p class="lede">I'm a full-stack mobile and web developer. I turn ideas into real, running software — e-commerce platforms, food-tech, and AI-powered apps — and take them from first commit to real users.</p>
+      <div class="chips">
+        <span class="chip">Accra, Ghana</span>
+        <span class="chip">Open to remote &amp; relocation</span>
+        <span class="chip">React · React Native · Python</span>
+        <span class="chip">MSc, Merit</span>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#work">View selected work →</a>
+        <a class="btn btn-ghost" href="Perry_Patterson_CV.pdf" download>Download CV</a>
+      </div>
+    </div>
+  </section>
 
-        <!-- Projects Section -->
-        <section id="projects" class="projects">
-            <div class="projects-intro">
-                <div class="section-label">Things I've Built</div>
-                <h2>Selected Projects</h2>
-            </div>
-
-            <div class="projects-grid">
-                <!-- E-commerce Project: CollegeMart Central -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/collegemart_logo.jpg" alt="CollegeMart Central">
-                    </div>
-                    <div class="project-content">
-                        <div class="project-category">E-Commerce</div>
-                        <h3 class="project-title">CollegeMart Central</h3>
-                        <p class="project-description">
-                            A comprehensive e-commerce platform pioneering modern living solutions for students and young professionals. Features include one-stop shopping, product browsing with detailed imagery, and seamless checkout experience. Built with responsive design and optimized performance for mobile and desktop users.
-                        </p>
-                        <div class="project-tech">
-                            <span class="tech-tag">React</span>
-                            <span class="tech-tag">E-commerce</span>
-                            <span class="tech-tag">Responsive Design</span>
-                            <span class="tech-tag">UI/UX</span>
-                        </div>
-                        
-                        <!-- Project Gallery -->
-                        <div class="project-gallery">
-                            <h4 class="gallery-title">Gallery</h4>
-                            <div class="project-gallery-grid">
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_39.jpg" alt="CollegeMart Homepage">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Homepage</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_27.jpg" alt="Product Catalog">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Product Catalog</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_37.jpg" alt="Product Listings">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Product Listings</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- E-commerce Project: Glammora Jewelry -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/glammora_logo.jpg" alt="Glammora Jewelry Store">
-                    </div>
-                    <div class="project-content">
-                        <div class="project-category">E-Commerce</div>
-                        <h3 class="project-title">Glammora Jewelry Store</h3>
-                        <p class="project-description">
-                            Elegant e-commerce platform for premium jewelry featuring personalized items including initial necklaces, bracelets, and rings. Implements sophisticated product customization, size selection, and color variants. Showcases high-quality product photography with zoom functionality and detailed product specifications.
-                        </p>
-                        <div class="project-tech">
-                            <span class="tech-tag">E-commerce</span>
-                            <span class="tech-tag">Product Customization</span>
-                            <span class="tech-tag">Web Development</span>
-                            <span class="tech-tag">Payment Integration</span>
-                        </div>
-                        
-                        <!-- Project Gallery -->
-                        <div class="project-gallery">
-                            <h4 class="gallery-title">Gallery</h4>
-                            <div class="project-gallery-grid">
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_40_05.jpg" alt="Glammora Product Page">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Product Page</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_51.jpg" alt="Personalized Necklaces">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Necklaces</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_45.jpg" alt="Bracelet Collection">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Bracelets</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_40_12.jpg" alt="Ring Customization">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Rings</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Food Services Project: Jara Foods -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/jarafoods_logo.jpg" alt="Jara Foods">
-                    </div>
-                    <div class="project-content">
-                        <div class="project-category">E-Commerce / Food Tech</div>
-                        <h3 class="project-title">Jara Foods</h3>
-                        <p class="project-description">
-                            Authentic African cuisine delivery platform serving Aberdeen. Features comprehensive menu browsing with appetizing food photography, organized categories (rice dishes, soups, stews), bulk ordering capabilities with discount incentives, and streamlined ordering process. Delivers traditional favorites directly to customers' doorsteps.
-                        </p>
-                        <div class="project-tech">
-                            <span class="tech-tag">Food Delivery</span>
-                            <span class="tech-tag">Menu Management</span>
-                            <span class="tech-tag">Mobile-First</span>
-                            <span class="tech-tag">Order Processing</span>
-                        </div>
-                        
-                        <!-- Project Gallery -->
-                        <div class="project-gallery">
-                            <h4 class="gallery-title">Gallery</h4>
-                            <div class="project-gallery-grid">
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_13.jpg" alt="Jara Foods Homepage">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Homepage</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_21.jpg" alt="Rice Dishes Menu">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Rice Dishes</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_16.jpg" alt="Soups Menu">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Soups</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_39_18.jpg" alt="Stews Menu">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Stews</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Education Project: Semestra -->
-                <div class="project-card">
-                    <div class="project-image">
-                        <img src="images/semestra_logo.jpg" alt="Semestra Education App">
-                    </div>
-                    <div class="project-content">
-                        <div class="project-category">Education Technology</div>
-                        <h3 class="project-title">Semestra - Academic Productivity</h3>
-                        <p class="project-description">
-                            Innovative educational app designed to enhance semester productivity through AI-powered summaries and intelligent course management. Features include automated lesson summarization, interactive quizzes for knowledge retention, daily schedule tracking, and comprehensive course organization. Helps students actually understand their course materials through simplified breakdowns.
-                        </p>
-                        <div class="project-tech">
-                            <span class="tech-tag">EdTech</span>
-                            <span class="tech-tag">AI Integration</span>
-                            <span class="tech-tag">Mobile App</span>
-                            <span class="tech-tag">React Native</span>
-                            <span class="tech-tag">Learning Analytics</span>
-                        </div>
-                        
-                        <!-- Project Gallery -->
-                        <div class="project-gallery">
-                            <h4 class="gallery-title">Gallery</h4>
-                            <div class="project-gallery-grid">
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_37_12.jpg" alt="AI Summaries">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">AI Features</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_38_07.jpg" alt="Login Screen">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Login</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_38_11.jpg" alt="Dashboard">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Dashboard</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_38_23.jpg" alt="Lesson Detail">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Lesson View</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_38_28.jpg" alt="Interactive Quiz">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Quizzes</span>
-                                    </div>
-                                </div>
-                                <div class="gallery-item">
-                                    <img src="images/IMAGE_2026-02-09_20_37_59.jpg" alt="Course Management">
-                                    <div class="gallery-overlay">
-                                        <span class="gallery-label">Courses</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Skills Section -->
-        <section id="skills" class="skills">
-            <div class="section-label">What I Do</div>
-            <h2>Skills & Expertise</h2>
-            <div class="skills-grid">
-                <div class="skill-card">
-                    <div class="skill-icon">📱</div>
-                    <h3>Mobile Development</h3>
-                    <p>Expert in building native and cross-platform mobile applications using React Native, Swift, and Kotlin. Creating intuitive, performant apps for iOS and Android.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">💻</div>
-                    <h3>Web Development</h3>
-                    <p>Full-stack web development using modern frameworks like React, Next.js, and Node.js. Building responsive, scalable web applications with excellent user experiences.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">🛒</div>
-                    <h3>E-Commerce Solutions</h3>
-                    <p>Specialized in developing complete e-commerce platforms with payment integration, inventory management, and seamless checkout experiences.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">💳</div>
-                    <h3>Financial Applications</h3>
-                    <p>Building secure, compliant financial software with real-time transactions, data analytics, and robust security measures.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">📚</div>
-                    <h3>Educational Technology</h3>
-                    <p>Creating engaging learning platforms with AI integration, progress tracking, and interactive features that enhance the educational experience.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">⚡</div>
-                    <h3>Productivity Tools</h3>
-                    <p>Developing efficiency-focused applications that streamline workflows, automate tasks, and boost user productivity.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">📊</div>
-                    <h3>Project Management</h3>
-                    <p>Experienced in leading development projects from conception to deployment using Agile methodologies, ensuring timely delivery and stakeholder satisfaction.</p>
-                </div>
-                <div class="skill-card">
-                    <div class="skill-icon">🛠️</div>
-                    <h3>Custom Solutions</h3>
-                    <p>Specialized in building tailored software solutions designed to solve specific business challenges and unique requirements.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Contact Section -->
-        <section id="contact" class="contact">
-            <div class="contact-container">
-                <div class="section-label">Let's Connect</div>
-                <h2>Need help on a project?<br>Get in touch</h2>
-                <p class="contact-text">
-                    I'm always interested in hearing about new projects, opportunities for collaboration, or just having a conversation about technology and development.
-                </p>
-                <div class="contact-buttons">
-                    <a href="mailto:ppatterson1204@gmail.com" class="contact-email">
-                        📧 Send Email
-                    </a>
-                    <a href="https://wa.me/447721839319" target="_blank" class="contact-whatsapp">
-                        💬 WhatsApp
-                    </a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer id="footer">
-        <div class="social-links">
-            <a href="https://github.com/perrypatterson" target="_blank">GitHub</a>
-            <a href="https://linkedin.com/in/perrypatterson" target="_blank">LinkedIn</a>
-            <a href="https://dribbble.com/perrypatterson" target="_blank">Dribbble</a>
-            <a href="https://twitter.com/perrypatterson" target="_blank">Twitter</a>
+  <!-- PROFILE -->
+  <section class="section" id="profile">
+    <div class="wrap">
+      <div class="eyebrow">profile</div>
+      <div class="about-grid">
+        <div class="about-body reveal">
+          <p><strong>I design, build, and operate software end to end.</strong> Over the past three years I've founded and shipped a portfolio of web and mobile products across e-commerce, food-tech, and education — owning everything from architecture and interface to deployment, supply chain, and day-to-day operations.</p>
+          <p>My core stack is JavaScript and TypeScript with React and React Native, alongside Python, R, and SQL for data work and native iOS and Android when a project calls for it. I care about clean, efficient code and interfaces that feel effortless to use.</p>
+          <p>A Master's in Project Management (Merit) and a background in Management Information Systems mean I don't just write code — I plan, prioritise, and deliver. I'm now looking for a software engineering role where I can build at scale with a strong team.</p>
         </div>
-        <p>&copy; 2026 Perry Patterson. All rights reserved.</p>
-    </footer>
+        <div class="glance reveal">
+          <div class="glance-row"><span class="k">based in</span><span class="v">Accra, Ghana</span></div>
+          <div class="glance-row"><span class="k">focus</span><span class="v">Full-stack web &amp; mobile</span></div>
+          <div class="glance-row"><span class="k">also</span><span class="v">Data &amp; analytics · AI agents</span></div>
+          <div class="glance-row"><span class="k">education</span><span class="v">MSc Project Mgmt (Merit)</span></div>
+          <div class="glance-row"><span class="k">founder of</span><span class="v">CollegeMart</span></div>
+          <div class="glance-row"><span class="k">status</span><span class="v">Open to roles &amp; remote</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <script>
-    // Hide loader as soon as DOM is ready (DO NOT wait for images)
-    window.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-            const loader = document.getElementById('loader');
-            if (loader) {
-                loader.classList.add('hidden');
-            }
-        }, 500); // shorter delay for smoother feel
+  <!-- EXPERIENCE -->
+  <section class="section" id="experience">
+    <div class="wrap">
+      <div class="eyebrow">experience</div>
+      <h2 class="sec-head">Where I've built and delivered.</h2>
+      <div class="tl">
+        <div class="tl-item reveal">
+          <div>
+            <div class="tl-when">Jan 2023 — Present</div>
+            <div class="tl-place">Accra / Remote</div>
+          </div>
+          <div>
+            <div class="tl-role">Founder &amp; Full-Stack Developer</div>
+            <div class="tl-org">CollegeMart &amp; Independent Projects</div>
+            <p class="tl-desc">Design, build, deploy, and operate web and mobile products across e-commerce, food-tech, and education. Own the full lifecycle — architecture, UI, AI features, payments, and supply chain — shipping five live products to real users.</p>
+          </div>
+        </div>
+        <div class="tl-item reveal">
+          <div>
+            <div class="tl-when">Jul 2022 — Sep 2022</div>
+            <div class="tl-place">Aberdeen, UK</div>
+          </div>
+          <div>
+            <div class="tl-role">Project Controller</div>
+            <div class="tl-org">EnQuest PLC</div>
+            <p class="tl-desc">Supported project controls within a team delivering an oil &amp; gas project, contributing to cost and schedule tracking, progress reporting, and project documentation.</p>
+          </div>
+        </div>
+        <div class="tl-item reveal">
+          <div>
+            <div class="tl-when">Oct 2021 — Dec 2021</div>
+            <div class="tl-place">Aberdeen, UK</div>
+          </div>
+          <div>
+            <div class="tl-role">Document Controller</div>
+            <div class="tl-org">Aberdeen City Council</div>
+            <p class="tl-desc">Managed and controlled project documentation — maintaining registers, version control, and distribution — while training in core project-management practice.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="section" id="work">
+    <div class="wrap">
+      <div class="eyebrow">selected work</div>
+      <h2 class="sec-head">Products I've shipped.</h2>
+
+      <!-- CollegeMart -->
+      <article class="proj reveal">
+        <div class="proj-top">
+          <div class="proj-logo"><img src="images/collegemart_logo.jpg" alt="CollegeMart Central logo"></div>
+          <div class="proj-head">
+            <div class="proj-cat">E-commerce</div>
+            <div class="proj-title">CollegeMart Central</div>
+          </div>
+          <div class="proj-metrics">
+            <span class="metric">200–300 orders / month</span>
+            <span class="metric">US &amp; UK</span>
+          </div>
+        </div>
+        <p class="proj-desc">A Shopify e-commerce platform offering discounted products to students across the US and UK. One-stop shopping, detailed product browsing, and a seamless checkout — with sourcing, inventory, and fulfilment managed end to end.</p>
+        <div class="tags"><span class="tag">Shopify</span><span class="tag">E-commerce</span><span class="tag">Supply Chain</span><span class="tag">UI/UX</span></div>
+        <div class="gallery">
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_39.jpg" alt="CollegeMart homepage"></div><figcaption>Homepage</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_27.jpg" alt="Product catalog"></div><figcaption>Catalog</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_37.jpg" alt="Product listings"></div><figcaption>Listings</figcaption></figure>
+        </div>
+      </article>
+
+      <!-- Glammora -->
+      <article class="proj reveal">
+        <div class="proj-top">
+          <div class="proj-logo"><img src="images/glammora_logo.jpg" alt="Glammora logo"></div>
+          <div class="proj-head">
+            <div class="proj-cat">E-commerce · Jewellery</div>
+            <div class="proj-title">Glammora</div>
+          </div>
+          <div class="proj-metrics">
+            <span class="metric">~500 customers worldwide</span>
+            <span class="metric">Global catalogue</span>
+          </div>
+        </div>
+        <p class="proj-desc">A global Shopify storefront for premium ready-made and custom jewellery — initial necklaces, bracelets, and rings. Product customisation, size and colour variants, and high-quality photography, backed by a wide catalogue and an international supply chain.</p>
+        <div class="tags"><span class="tag">Shopify</span><span class="tag">Product Customisation</span><span class="tag">Supply Chain</span><span class="tag">Payments</span></div>
+        <div class="gallery">
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_40_05.jpg" alt="Glammora product page"></div><figcaption>Product</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_51.jpg" alt="Necklaces"></div><figcaption>Necklaces</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_45.jpg" alt="Bracelets"></div><figcaption>Bracelets</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_40_12.jpg" alt="Rings"></div><figcaption>Rings</figcaption></figure>
+        </div>
+      </article>
+
+      <!-- Jara Foods -->
+      <article class="proj reveal">
+        <div class="proj-top">
+          <div class="proj-logo"><img src="images/jarafoods_logo.jpg" alt="Jara Foods logo"></div>
+          <div class="proj-head">
+            <div class="proj-cat">Food-tech</div>
+            <div class="proj-title">Jara Foods</div>
+          </div>
+          <div class="proj-metrics">
+            <span class="metric">~600 orders fulfilled</span>
+            <span class="metric">Custom build</span>
+          </div>
+        </div>
+        <p class="proj-desc">A custom-built African cuisine pre-ordering and delivery platform serving Aberdeen. Menu browsing, organised categories, and bulk ordering with discount incentives. I built the app from scratch and ran operations end to end, coordinating kitchen staff and delivery.</p>
+        <div class="tags"><span class="tag">JavaScript</span><span class="tag">Node.js</span><span class="tag">Order Processing</span><span class="tag">Operations</span></div>
+        <div class="gallery">
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_13.jpg" alt="Jara Foods homepage"></div><figcaption>Homepage</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_21.jpg" alt="Rice dishes"></div><figcaption>Rice</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_16.jpg" alt="Soups"></div><figcaption>Soups</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_39_18.jpg" alt="Stews"></div><figcaption>Stews</figcaption></figure>
+        </div>
+      </article>
+
+      <!-- Semestra -->
+      <article class="proj reveal">
+        <div class="proj-top">
+          <div class="proj-logo"><img src="images/semestra_logo.jpg" alt="Semestra logo"></div>
+          <div class="proj-head">
+            <div class="proj-cat">EdTech · AI</div>
+            <div class="proj-title">Semestra</div>
+          </div>
+          <div class="proj-metrics">
+            <span class="metric">100+ downloads</span>
+            <span class="metric">Early release</span>
+          </div>
+        </div>
+        <p class="proj-desc">An AI-powered student companion built to boost semester productivity. Automated lesson summaries, interactive quizzes for retention, schedule tracking, and course management — with AI agents supporting research and outreach. Built end to end on React Native for web and mobile.</p>
+        <div class="tags"><span class="tag">React Native</span><span class="tag">AI / LLM agents</span><span class="tag">TypeScript</span><span class="tag">Supabase</span><span class="tag">EdTech</span></div>
+        <div class="gallery">
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_37_12.jpg" alt="AI features"></div><figcaption>AI features</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_38_07.jpg" alt="Login"></div><figcaption>Login</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_38_11.jpg" alt="Dashboard"></div><figcaption>Dashboard</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_38_23.jpg" alt="Lesson view"></div><figcaption>Lesson</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_38_28.jpg" alt="Quizzes"></div><figcaption>Quizzes</figcaption></figure>
+          <figure class="shot"><div class="frame"><img src="images/IMAGE_2026-02-09_20_37_59.jpg" alt="Courses"></div><figcaption>Courses</figcaption></figure>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- CAPABILITIES -->
+  <section class="section" id="skills">
+    <div class="wrap">
+      <div class="eyebrow">capabilities</div>
+      <h2 class="sec-head">The toolkit.</h2>
+      <div class="caps">
+        <div class="cap-group reveal">
+          <div class="cap-label">languages</div>
+          <div class="cap-list"><span>JavaScript</span><span>TypeScript</span><span>Python</span><span>R</span><span>SQL</span><span>Swift</span><span>Kotlin</span></div>
+        </div>
+        <div class="cap-group reveal">
+          <div class="cap-label">frontend &amp; mobile</div>
+          <div class="cap-list"><span>React</span><span>React Native</span><span>Swift (iOS)</span><span>Kotlin (Android)</span></div>
+        </div>
+        <div class="cap-group reveal">
+          <div class="cap-label">backend &amp; data</div>
+          <div class="cap-list"><span>Node.js</span><span>Supabase</span><span>Firebase</span><span>SQL</span></div>
+        </div>
+        <div class="cap-group reveal">
+          <div class="cap-label">ai</div>
+          <div class="cap-list"><span>LLM integration</span><span>AI agents</span><span>Market-research automation</span></div>
+        </div>
+        <div class="cap-group reveal">
+          <div class="cap-label">cloud</div>
+          <div class="cap-list"><span>AWS</span><span>Azure</span><span>Google Cloud</span></div>
+        </div>
+        <div class="cap-group reveal">
+          <div class="cap-label">e-commerce</div>
+          <div class="cap-list"><span>Shopify</span><span>WooCommerce</span><span>Custom builds</span></div>
+        </div>
+        <div class="cap-group reveal">
+          <div class="cap-label">delivery</div>
+          <div class="cap-list"><span>Agile / Scrum</span><span>MS Project</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section class="section" id="education">
+    <div class="wrap">
+      <div class="eyebrow">education</div>
+      <h2 class="sec-head">Study.</h2>
+      <div class="edu-item reveal">
+        <div>
+          <div class="edu-deg">MSc, Project Management</div>
+          <div class="edu-school">Robert Gordon University — Aberdeen, United Kingdom</div>
+        </div>
+        <div class="edu-meta">Merit · 2022</div>
+      </div>
+      <div class="edu-item reveal">
+        <div>
+          <div class="edu-deg">BSc, Management Information Systems</div>
+          <div class="edu-school">Ashesi University — Ghana</div>
+        </div>
+        <div class="edu-meta">2020</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-wrap" id="contact">
+    <div class="wrap">
+      <div class="contact reveal">
+        <div class="eyebrow">contact</div>
+        <h2>Let's build something.</h2>
+        <p>Open to software engineering roles in Accra and remote positions worldwide. Email or WhatsApp is the fastest way to reach me.</p>
+        <div class="contact-row">
+          <a class="btn btn-light" href="mailto:ppatterson1204@gmail.com">Email me</a>
+          <a class="btn btn-outline" href="https://wa.me/233206119135" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn btn-outline" href="https://www.linkedin.com/in/perry-patterson-025943129/" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-copy">© 2026 Perry Patterson — Accra, Ghana</div>
+    <div class="foot-links">
+      <a href="mailto:ppatterson1204@gmail.com">Email</a>
+      <a href="https://www.linkedin.com/in/perry-patterson-025943129/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="Perry_Patterson_CV.pdf" download>CV</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
     });
+  }, { threshold:0.12, rootMargin:'0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
-    // Smooth scroll with offset for fixed nav
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                const offset = 80;
-                const targetPosition = target.offsetTop - offset;
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = this.getAttribute('href');
+      if(id.length < 2) return;
+      var t = document.querySelector(id);
+      if(t){ e.preventDefault(); window.scrollTo({ top: t.getBoundingClientRect().top + window.pageYOffset - 64, behavior:'smooth' }); }
     });
-
-    // Scroll animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-
-    // Observe project cards
-    document.querySelectorAll('.project-card').forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
-        observer.observe(card);
-    });
-
-    // Observe skill cards
-    document.querySelectorAll('.skill-card').forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(30px)';
-        card.style.transition = `opacity 0.6s ease ${index * 0.05}s, transform 0.6s ease ${index * 0.05}s`;
-        observer.observe(card);
-    });
+  });
+})();
 </script>
+</body>
+</html>
